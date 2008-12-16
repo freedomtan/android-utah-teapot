@@ -131,7 +131,11 @@ public class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
 	// ----------------------------------------------------------------------
 
-    public interface GLWrapper {
+    public void setSensor(int sensorId) {
+		mGLThread.setSensor(sensorId);
+	}
+
+	public interface GLWrapper {
       GL wrap(GL gl);
     }
 
@@ -170,6 +174,8 @@ public class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback
         void drawFrame(GL10 gl);
         
 		void onSensorChanged(float[] values);
+
+		void setSensor(int sensorId);
     }
 
     /**
@@ -314,6 +320,10 @@ public class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback
             mRenderer = renderer;
             setName("GLThread");
         }
+
+		public void setSensor(int sensorId) {
+			mRenderer.setSensor(sensorId);
+		}
 
 		public void onSensorChanged(float[] values) {
 			mRenderer.onSensorChanged(values);

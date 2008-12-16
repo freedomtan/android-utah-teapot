@@ -2,4 +2,6 @@
 <resources>
     <string name="hello">Hello World, TeapotES</string>
     <string name="app_name">TeapotES</string>
+<string name="menu_accel">accelerometer</string>
+<string name="menu_compass">compass</string>
 </resources>

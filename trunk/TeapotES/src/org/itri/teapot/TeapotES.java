@@ -4,12 +4,18 @@ import android.app.Activity;
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
 public class TeapotES extends Activity implements SensorListener {
 		
     private GLSurfaceView mGLSurfaceView;
 	private SensorManager sensorManager;
 	private float[] sensorValues;
+	private int sensorMode;
+	
+	public static final int ACCEL_ID = Menu.FIRST;
+	public static final int COMPASS_ID = Menu.FIRST + 1;
     
 	/** Called when the activity is first created. */
 	@Override
@@ -22,6 +28,8 @@ public class TeapotES extends Activity implements SensorListener {
 		setContentView(mGLSurfaceView);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensorValues = new float[3];
+        sensorMode = ACCEL_ID;
+		mGLSurfaceView.setSensor(sensorMode);
 	}
 
 	@Override
@@ -45,6 +53,21 @@ public class TeapotES extends Activity implements SensorListener {
 		sensorManager.unregisterListener(this);
 		mGLSurfaceView.onPause();
 	}
+	
+	@Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        boolean result = super.onCreateOptionsMenu(menu);
+        menu.add(0, ACCEL_ID, 0, R.string.menu_accel);
+        menu.add(0, COMPASS_ID, 0, R.string.menu_compass);
+        return result;
+    }
+	
+	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		sensorMode  = item.getItemId();
+		mGLSurfaceView.setSensor(sensorMode);
+		return true;
+	}
 
 	@Override
 	public void onAccuracyChanged(int sensor, int accuracy) {
@@ -52,11 +75,20 @@ public class TeapotES extends Activity implements SensorListener {
 
 	@Override
 	public void onSensorChanged(int sensor, float[] values) {
-		if (sensor == SensorManager.SENSOR_ACCELEROMETER) {
-			sensorValues[0] = (float) (values[0] / SensorManager.GRAVITY_EARTH);
-			sensorValues[1] = (float) (values[1] / SensorManager.GRAVITY_EARTH);
-			sensorValues[2] = (float) (values[2] / SensorManager.GRAVITY_EARTH);
-			mGLSurfaceView.onSensorChanged(sensorValues);
+		switch (sensorMode) {
+		case ACCEL_ID:
+			if (sensor == SensorManager.SENSOR_ACCELEROMETER) {
+				sensorValues[0] = (float) (values[0] / SensorManager.GRAVITY_EARTH);
+				sensorValues[1] = (float) (values[1] / SensorManager.GRAVITY_EARTH);
+				sensorValues[2] = (float) (values[2] / SensorManager.GRAVITY_EARTH);
+				mGLSurfaceView.onSensorChanged(sensorValues);
+			}
+			return;
+		case COMPASS_ID:
+			if (sensor == SensorManager.SENSOR_ORIENTATION) {
+				mGLSurfaceView.onSensorChanged(values);
+			}
+			return;
 		}
 	}
 }
