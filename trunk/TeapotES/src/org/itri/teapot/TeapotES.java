@@ -1,15 +1,17 @@
 package org.itri.teapot;
 
 import android.app.Activity;
-import android.hardware.SensorListener;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class TeapotES extends Activity implements SensorListener {
+public class TeapotES extends Activity implements SensorEventListener {
 		
-    private GLSurfaceView mGLSurfaceView;
+    private MyGLSurfaceView mGLSurfaceView;
 	private SensorManager sensorManager;
 	private float[] sensorValues;
 	private int sensorMode;
@@ -23,8 +25,8 @@ public class TeapotES extends Activity implements SensorListener {
 		super.onCreate(savedInstanceState);
 		// Create our Preview view and set it as the content of our
 		// Activity
-		mGLSurfaceView = new GLSurfaceView(this);
-		mGLSurfaceView.setRenderer(new TeapotRender());
+		mGLSurfaceView = new MyGLSurfaceView(this);
+		mGLSurfaceView.setRenderer(new TeapotRenderer());
 		setContentView(mGLSurfaceView);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensorValues = new float[3];
@@ -38,10 +40,11 @@ public class TeapotES extends Activity implements SensorListener {
 		// to take appropriate action when the activity looses focus
 		super.onResume();
 		sensorManager.registerListener(this, 
-                SensorManager.SENSOR_ACCELEROMETER | 
-                SensorManager.SENSOR_MAGNETIC_FIELD | 
-                SensorManager.SENSOR_ORIENTATION,
-                SensorManager.SENSOR_DELAY_FASTEST);
+	        		sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), 
+	        		SensorManager.SENSOR_DELAY_FASTEST);
+		sensorManager.registerListener(this, 
+	        		sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION), 
+	        		SensorManager.SENSOR_DELAY_FASTEST);
 		mGLSurfaceView.onResume();
 	}
 
@@ -70,23 +73,23 @@ public class TeapotES extends Activity implements SensorListener {
 	}
 
 	@Override
-	public void onAccuracyChanged(int sensor, int accuracy) {
+	public void onAccuracyChanged(Sensor sensor, int accuracy) {
 	}
-
+	
 	@Override
-	public void onSensorChanged(int sensor, float[] values) {
+	public void onSensorChanged(SensorEvent event) {
 		switch (sensorMode) {
 		case ACCEL_ID:
-			if (sensor == SensorManager.SENSOR_ACCELEROMETER) {
-				sensorValues[0] = (float) (values[0] / SensorManager.GRAVITY_EARTH);
-				sensorValues[1] = (float) (values[1] / SensorManager.GRAVITY_EARTH);
-				sensorValues[2] = (float) (values[2] / SensorManager.GRAVITY_EARTH);
+			if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+				sensorValues[0] = (float) (event.values[0] / SensorManager.GRAVITY_EARTH);
+				sensorValues[1] = (float) (event.values[1] / SensorManager.GRAVITY_EARTH);
+				sensorValues[2] = (float) (event.values[2] / SensorManager.GRAVITY_EARTH);
 				mGLSurfaceView.onSensorChanged(sensorValues);
 			}
 			return;
 		case COMPASS_ID:
-			if (sensor == SensorManager.SENSOR_ORIENTATION) {
-				mGLSurfaceView.onSensorChanged(values);
+			if (event.sensor.getType()  == Sensor.TYPE_ORIENTATION) {
+				mGLSurfaceView.onSensorChanged(event.values);
 			}
 			return;
 		}

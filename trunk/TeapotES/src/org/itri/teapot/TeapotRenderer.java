@@ -22,11 +22,14 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.egl.EGL10;
+import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.util.Log;
+import android.opengl.GLSurfaceView;
 
-public class TeapotRender implements GLSurfaceView.Renderer {
+
+public class TeapotRenderer implements GLSurfaceView.Renderer {
 
 	static float teapot_vertices[] = { 0.0663056f, 0.117825f, 2.10688e-008f,
 		0.0672f, 0.1152f, 2.05994e-008f, 0.0639726f, 0.117825f, 0.0178043f,
@@ -1519,7 +1522,7 @@ public class TeapotRender implements GLSurfaceView.Renderer {
 	float size;
 	float kFilteringFactor = 0.1f;
 
-	public TeapotRender() {
+	public TeapotRenderer() {
 		// mContext = context;
 		teapot = new Teapot();
 		Log.d("glesteapot", "TeapotRender");
@@ -1533,9 +1536,10 @@ public class TeapotRender implements GLSurfaceView.Renderer {
 		return configSpec;
 	}
 
-	public void surfaceCreated(GL10 gl) {
-		int w = 0, h = 0;
-
+	@Override
+	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+		int w = 0, h =0;
+		
 		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_FASTEST);
 		gl.glViewport(0, 0, w, h);
 
@@ -1572,12 +1576,12 @@ public class TeapotRender implements GLSurfaceView.Renderer {
 		return tmpBuffer;
 	}
 
-	public void drawFrame(GL10 gl) {
+	public void onDrawFrame(GL10 gl) {
 		teapot.draw(gl);
 		// Log.d("glesteapot", "drawFrame()");
 	}
 
-	public void sizeChanged(GL10 gl, int w, int h) {
+	public void onSurfaceChanged(GL10 gl, int w, int h) {
 		gl.glViewport(0, 0, w, h);
 
 		float ratio = (float) w / h;
@@ -1596,12 +1600,10 @@ public class TeapotRender implements GLSurfaceView.Renderer {
 		Log.d("glesteapot", "sizeChanged: " + w + ", " + h);
 	}
 
-	@Override
 	public void onSensorChanged(float[] values) {
 		teapot.onSensorValueChanged(values);
 	}
 
-	@Override
 	public void setSensor(int sensorId) {
 		teapot.setSensor(sensorId);
 	}
@@ -1907,7 +1909,7 @@ class Teapot {
 			if (length >= 0.1)
 				gl.glMultMatrixf(m2, 0);
 			gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-			gl.glRotatef(90.0f, 0, 0, 1);
+			gl.glRotatef(90.0f, 0, 0, -1);
 			break;
 		case TeapotES.COMPASS_ID: 
 			gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
