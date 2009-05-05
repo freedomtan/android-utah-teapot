@@ -6,13 +6,8 @@ import android.opengl.GLSurfaceView;
 class MyGLSurfaceView extends GLSurfaceView {
     private TeapotRenderer mMyRenderer;
 
-    public void start() {
-    	//mMyRenderer = new TeapotRender();
-         //setRenderer(mMyRenderer);
-    }
     public MyGLSurfaceView(Context context) {
 		super(context);
-		// TODO Auto-generated constructor stub
     }
 	
     @Override 
@@ -31,10 +26,7 @@ class MyGLSurfaceView extends GLSurfaceView {
 	 }
 
 	 public void setSensor(final int sensorId) {
-         //mGLThread.setSensor(sensorId);
 		 queueEvent(new Runnable() {
-             // This method will be called on the rendering
-             // thread:
              public void run() {
                  mMyRenderer.setSensor(sensorId);
              }}); 

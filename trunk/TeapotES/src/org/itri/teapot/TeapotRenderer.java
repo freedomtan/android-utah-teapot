@@ -1913,7 +1913,10 @@ class Teapot {
 			break;
 		case TeapotES.COMPASS_ID: 
 			gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-			gl.glRotatef(sensorValues[1]+90, sensorValues[0], sensorValues[2], 1);
+			if (Math.abs(sensorValues[0]) > 1) {
+				Log.d("glesteapot", sensorValues[0]+" "+sensorValues[1]+" "+sensorValues[2]);
+                gl.glRotatef(sensorValues[1]+90, sensorValues[0], sensorValues[2], 0);
+			}
 			break;
 		}
 

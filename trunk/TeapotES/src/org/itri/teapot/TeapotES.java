@@ -44,7 +44,7 @@ public class TeapotES extends Activity implements SensorEventListener {
 	        		SensorManager.SENSOR_DELAY_FASTEST);
 		sensorManager.registerListener(this, 
 	        		sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION), 
-	        		SensorManager.SENSOR_DELAY_FASTEST);
+	        		SensorManager.SENSOR_DELAY_NORMAL);
 		mGLSurfaceView.onResume();
 	}
 
@@ -89,7 +89,8 @@ public class TeapotES extends Activity implements SensorEventListener {
 			return;
 		case COMPASS_ID:
 			if (event.sensor.getType()  == Sensor.TYPE_ORIENTATION) {
-				mGLSurfaceView.onSensorChanged(event.values);
+				if (Math.abs(event.values[0]) > 10)
+					mGLSurfaceView.onSensorChanged(event.values);
 			}
 			return;
 		}
