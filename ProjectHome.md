@@ -1,0 +1,1 @@
+Utah teapot controlled by accelerometer. Most of the OpenGL ES codes are from Android SDK sample; most of Utah teapot codes are from iPhone SDK sample.
